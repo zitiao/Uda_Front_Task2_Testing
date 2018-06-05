@@ -47,7 +47,15 @@ $(function() {
                 expect(allFeeds[i].name).toBeDefined();
                 expect(allFeeds[i].name).not.toEqual('');
             }
-         })         
+         })        
+
+         it('should match an url format', function(){
+            let regularExpressionUrl = /^((ht|f)tps?):\/\/([\w\-]+(\.[\w\-]+)*\/)*[\w\-]+(\.[\w\-]+)*\/?(\?([\w\-\.,@?^=%&:\/~\+#]*)+)?/; // 检查 URL 格式是否正确的正规表达式
+            for(let i = 0; i<allFeeds.length;i++){
+                expect(allFeeds[i].url).toMatch(regularExpressionUrl); // 检查格式
+            }            
+         })
+
     });
 
 
@@ -66,18 +74,17 @@ $(function() {
           */
     describe('The menu', function(){
         it('should hide at default',function(){
-            // let body = document.getElementsByTagName('body')[0];
-            expect($('body')[0].className).toEqual('menu-hidden');
+            expect($('body').hasClass('menu-hidden')).toEqual(true);
         });
 
         it('should display at first click', function(){
             $('body').toggleClass('menu-hidden');
-            expect($('body')[0].className).toEqual('');
+            expect($('body').hasClass('menu-hidden')).toEqual(false);
         });
 
         it('should hide at another click', function(){
             $('body').toggleClass('menu-hidden');
-            expect($('body')[0].className).toEqual('menu-hidden');
+            expect($('body').hasClass('menu-hidden')).toEqual(true);
         });     
     });
     /* TODO: Write a new test suite named "Initial Entries" */
@@ -91,9 +98,7 @@ $(function() {
 
     describe('Initial Entries', function(){
         beforeEach(function(done){
-            loadFeed(0,function(){
-                done();
-            });
+            loadFeed(0,done);
         });
 
 
@@ -110,16 +115,20 @@ $(function() {
          */
 
     describe('New Feed Selection', function(){
-        let entryLength = $('.feed .entry').length;
+        let entryLength_1,entryLength_2;
 
         beforeEach(function(done){
-            loadFeed(0,function(){
-                done();
+            loadFeed(1,function(){
+                entryLength_1 = $('.feed')[0].innerText;
+                loadFeed(0,function(){
+                    entryLength_2 = $('.feed')[0].innerText;
+                    done();
+                });
             });
         });    
 
         it('should change the content when new feed added', function(){
-            expect($('.feed .entry').length).not.toEqual(entryLength);
+            expect(entryLength_2).not.toEqual(entryLength_1);
         });
 
 
